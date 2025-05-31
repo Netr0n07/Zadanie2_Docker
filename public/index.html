@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Sprawdzanie pogody</title>
+    <script>
+        // Funkcja wysyłająca dane do serwera i odbierająca odpowiedź pogodową
+        async function getWeather() {
+            const country = document.getElementById("country").value;
+            const city = document.getElementById("city").value;
+
+            const response = await fetch('/weather', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ country, city })
+            });
+
+            const data = await response.json();
+            const info = data.weather ? `
+                <p>Temperatura: ${data.weather.main.temp}°C</p>
+                <p>Warunki: ${data.weather.weather[0].description}</p>
+                <p>Wilgotność: ${data.weather.main.humidity}%</p>
+            ` : `<p>Błąd pobierania danych pogodowych</p>`;
+
+            // Wyświetlenie danych na stronie
+            document.getElementById("result").innerHTML = info;
+        }
+    </script>
+</head>
+<body>
+    <h1>Sprawdź aktualną pogodę</h1>
+
+    <!-- Wybór kraju (Niemcy proszę Pana)-->
+    <label for="country">Wybierz kraj:</label>
+    <select id="country">
+        <option value="PL">Polska</option>
+        <option value="DE">Niemcy</option>
+        <option value="FR">Francja</option>
+    </select>
+
+    <!-- Pole tekstowe do wpisania miasta -->
+    <label for="city">Wpisz miasto:</label>
+    <input type="text" id="city" placeholder="np. Lublin" />
+
+    <!-- Przycisk uruchamiający zapytanie -->
+    <button onclick="getWeather()">Sprawdź pogodę</button>
+
+    <!-- Wyświetlenie wyniku -->
+    <div id="result"></div>
+</body>
+</html>
